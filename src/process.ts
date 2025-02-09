@@ -3,7 +3,8 @@ import path from "node:path";
 import axios from "axios";
 import TurndownService from "turndown";
 import { parseStringPromise } from "xml2js";
-import { RSSItem, ParsedFeed, ItemData } from "types";
+import core from "@actions/core";
+import { RSSItem, ParsedFeed, ItemData } from "./types";
 
 /**
  * Main feed processor
@@ -25,13 +26,13 @@ export async function processFeed(
       try {
         const { output, date, title } = generateFeedMarkdown(template, item);
         const filePath = saveMarkdown(outputDir, title, output, date);
-        console.log(`Markdown file '${filePath}' created.`);
+        core.info(`Markdown file '${filePath}' created.`);
       } catch (error) {
-        console.error(`Error processing feed entry for ${url}`, error);
+        core.error(`Error processing feed entry for ${url}`);
       }
     });
   } catch (error) {
-    console.error(`Error processing feed at ${url}`);
+    core.error(`Error processing feed at ${url}`);
   }
 }
 

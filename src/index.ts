@@ -1,10 +1,9 @@
 import fs from "node:fs";
-
-// @ts-ignore
-import { processFeed } from "./process.ts";
+import core from "@actions/core";
+import { processFeed } from "./process";
 
 async function run() {
-  const feedUrl = process.argv[2];
+  const feedUrl = core.getInput("feed_url");
   const templateFile = "./template.md";
   const outputDir = "./_output";
 
@@ -13,17 +12,16 @@ async function run() {
       throw new Error("Missing input feed_url");
     }
     if (!fs.existsSync(templateFile)) {
-      throw new Error(
-        "core.setFailed(`Template file '${templateFile}' does not exist.`)"
-      );
+      throw new Error(`Template file '${templateFile}' does not exist.`);
     }
 
     const template = fs.readFileSync(templateFile, "utf8");
     await processFeed(feedUrl, template, outputDir);
   } catch (error) {
     if (error instanceof Error) {
-      console.error("core.setFailed(error.message)", error.message);
+      core.setFailed(error.message);
     }
+    core.setFailed("Unknown error.");
   }
 }
 

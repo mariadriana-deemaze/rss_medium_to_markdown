@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
-    "module": "CommonJS",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
     "outDir": "dist",
     "strict": true,
-    "moduleResolution": "node",
     "esModuleInterop": true,
-    "noImplicitAny": true,
+    "noImplicitAny": true
   },
   "include": ["src"]
 }

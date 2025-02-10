@@ -1,15 +1,15 @@
 import fs from "node:fs";
 import core from "@actions/core";
-import { processFeed } from "./process";
+import { processFeed } from "./process.js";
 
 async function run() {
-  const feedUrl = core.getInput("feed_url");
+  const feedUrl = core.getInput("FEED_URL");
   const templateFile = "./template.md";
   const outputDir = "./_output";
 
   try {
     if (!feedUrl) {
-      throw new Error("Missing input feed_url");
+      throw new Error("Missing input FEED_URL");
     }
     if (!fs.existsSync(templateFile)) {
       throw new Error(`Template file '${templateFile}' does not exist.`);

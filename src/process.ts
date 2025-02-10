@@ -4,7 +4,7 @@ import axios from "axios";
 import TurndownService from "turndown";
 import { parseStringPromise } from "xml2js";
 import core from "@actions/core";
-import { RSSItem, ParsedFeed, ItemData } from "./types";
+import { RSSItem, ParsedFeed, ItemData } from "./types.js";
 
 /**
  * Main feed processor

@@ -1,15 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.processFeed = processFeed;
-const node_fs_1 = __importDefault(require("node:fs"));
-const node_path_1 = __importDefault(require("node:path"));
-const axios_1 = __importDefault(require("axios"));
-const turndown_1 = __importDefault(require("turndown"));
-const xml2js_1 = require("xml2js");
-const core_1 = __importDefault(require("@actions/core"));
+import fs from "node:fs";
+import path from "node:path";
+import axios from "axios";
+import TurndownService from "turndown";
+import { parseStringPromise } from "xml2js";
+import core from "@actions/core";
 /**
  * Main feed processor
  *
@@ -17,7 +11,7 @@ const core_1 = __importDefault(require("@actions/core"));
  * @param template The base template to generate markdown from
  * @param outputDir The root in which the files generate will be saved to
  */
-async function processFeed(url, template, outputDir) {
+export async function processFeed(url, template, outputDir) {
     try {
         const feedData = await fetchAndParseFeed(url);
         let items = feedData.rss.channel?.[0]?.item || [];
@@ -25,15 +19,15 @@ async function processFeed(url, template, outputDir) {
             try {
                 const { output, date, title } = generateFeedMarkdown(template, item);
                 const filePath = saveMarkdown(outputDir, title, output, date);
-                core_1.default.info(`Markdown file '${filePath}' created.`);
+                core.info(`Markdown file '${filePath}' created.`);
             }
             catch (error) {
-                core_1.default.error(`Error processing feed entry for ${url}`);
+                core.error(`Error processing feed entry for ${url}`);
             }
         });
     }
     catch (error) {
-        core_1.default.error(`Error processing feed at ${url}`);
+        core.error(`Error processing feed at ${url}`);
     }
 }
 /**
@@ -43,9 +37,9 @@ async function processFeed(url, template, outputDir) {
  * @returns
  */
 async function fetchAndParseFeed(url) {
-    const response = await axios_1.default.get(url);
+    const response = await axios.get(url);
     const feedData = response.data;
-    const parsed = await (0, xml2js_1.parseStringPromise)(feedData);
+    const parsed = await parseStringPromise(feedData);
     return parsed;
 }
 /**
@@ -70,7 +64,7 @@ const generateFeedMarkdown = (template, entry) => {
             .splice(0, 50)
             .join(" ")
         : "";
-    const markdown = new turndown_1.default({
+    const markdown = new TurndownService({
         codeBlockStyle: "fenced",
         fence: "```",
         bulletListMarker: "-",
@@ -121,7 +115,7 @@ const generateOutput = (template, data) => {
 function saveMarkdown(outputDir, title, markdown, date) {
     const formattedDate = date ? new Date(date).toISOString().split("T")[0] : "";
     const slug = `${formattedDate}-${title.toLowerCase().replace(" ", "-")}`; // TODO: Review necessity for sanitize
-    const filePath = node_path_1.default.join(outputDir, `${slug}.md`);
-    node_fs_1.default.writeFileSync(filePath, markdown);
+    const filePath = path.join(outputDir, `${slug}.md`);
+    fs.writeFileSync(filePath, markdown);
     return filePath;
 }

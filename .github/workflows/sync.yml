@@ -23,10 +23,10 @@ jobs:
         run: npx tsc
 
       - name: Run Medium RSS Fetcher
-        run: node dist/index.js
         env:
           FEED_URL: "https://medium.com/feed/@mariaadriana15"
-
+        run: node dist/index.js
+        
       - name: Clone Personal Portfolio Repo
         run: |
           git clone https://github.com/mariadriana-deemaze/portfolio-2024 repo-portfolio

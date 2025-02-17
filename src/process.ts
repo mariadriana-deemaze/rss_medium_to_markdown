@@ -21,8 +21,7 @@ export async function processFeed(
   try {
     const feedData = await fetchAndParseFeed(url);
     let items = feedData.rss.channel?.[0]?.item || [];
-
-    [items[0]].forEach((item) => {
+    items.forEach((item: RSSItem) => {
       try {
         const { output, date, title } = generateFeedMarkdown(template, item);
         const filePath = saveMarkdown(outputDir, title, output, date);

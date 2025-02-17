@@ -3,8 +3,9 @@ import core from "@actions/core";
 import { processFeed } from "./process.js";
 
 async function run() {
-  const feedUrl = core.getInput("FEED_URL");
-  const templateFile = "./template.md";
+  //const feedUrl = core.getInput("FEED_URL");
+  const feedUrl = process.env.FEED_URL;
+  const templateFile = "../src/template.md";
   const outputDir = "./_output";
 
   try {

@@ -41,8 +41,9 @@ jobs:
             cp -r _output/* repo-portfolio/data/blog  # Copy all generated markdown files
             cd repo-portfolio
             git add .
-            git commit -m "scheduled 🤖 : Update Medium articles" || echo "No changes to commit"
+            git commit -m $'scheduled 🤖 : Update Medium articles\n\nCo-authored-by: mariadriana-deemaze <maria.adriana.cardoso@deemaze.com>' || echo "No changes to commit"
             git push https://mariadriana-deemaze:${{ secrets.TARGET_REPO_PAT }}@github.com/mariadriana-deemaze/portfolio-2024.git main
           else
             echo "No new medium posts found. Exiting gracefully."
           fi
+          

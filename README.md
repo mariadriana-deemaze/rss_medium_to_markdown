@@ -10,5 +10,5 @@ _Heavily inspired by this [other]('https://github.com/keiranlovett/rss-feed-to-m
 
 ## Run
 ```bash
-$ node --loader ts-node/esm index.ts https://medium.com/feed/@<some_handle>
+$ node --loader ts-node/esm src/index.ts https://medium.com/feed/@<some_handle>
 ```

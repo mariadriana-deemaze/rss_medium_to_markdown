@@ -3,6 +3,7 @@ import path from "node:path";
 import axios from "axios";
 import TurndownService from "turndown";
 import { parseStringPromise } from "xml2js";
+import he from "he";
 import core from "@actions/core";
 import { RSSItem, ParsedFeed, ItemData } from "./types.js";
 
@@ -64,6 +65,7 @@ const generateFeedMarkdown = (template: string, entry: RSSItem) => {
   const slug = title.toLowerCase().replaceAll(" ", "-");
 
   const content = entry["content:encoded"]?.[0];
+  
   const description = content
     ? content
         .replace(/(<([^>]+)>)/gi, "")
@@ -71,11 +73,35 @@ const generateFeedMarkdown = (template: string, entry: RSSItem) => {
         .splice(0, 50)
         .join(" ")
     : "";
+
   const markdown = new TurndownService({
     codeBlockStyle: "fenced",
     fence: "```",
+    preformattedCode: true,
     bulletListMarker: "-",
-  }).turndown(content);
+  })
+    .addRule("paragraph", {
+      filter: "p",
+      replacement: function (content, node) {
+        return `${content.replace(/</g, "&lt;").replace(/>/g, "&gt;")}\n\n`;
+      },
+    })
+    .addRule("pre", {
+      filter: "pre",
+      replacement: function (content, node) {
+        let html = (node as HTMLElement).innerHTML;
+        html = html.replace(/<br\s*\/?>/gi, "\n");
+        const decoded = he.decode(html);
+        return `\n\n\`\`\`ts\n${decoded}\n\`\`\`\n\n`;
+      },
+    })
+    .addRule("code", {
+      filter: "code",
+      replacement: function (content, node) {
+        return "`" + he.decode(content) + "`";
+      },
+    })
+    .turndown(content);
 
   const categories = entry.category || [];
 
@@ -134,7 +160,7 @@ function saveMarkdown(
   date: string
 ): string {
   const formattedDate = date ? new Date(date).toISOString().split("T")[0] : "";
-  const slug = `${formattedDate}-${title.toLowerCase().replace(" ", "-")}`; // TODO: Review necessity for sanitize
+  const slug = `${formattedDate}-${title.toLowerCase().replaceAll(" ", "-")}`; // TODO: Review necessity for sanitize
   const filePath = path.join(outputDir, `${slug}.md`);
   fs.writeFileSync(filePath, markdown);
   return filePath;

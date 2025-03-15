@@ -1,18 +1,14 @@
 import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import core from "@actions/core";
 import { processFeed } from "./process.js";
 
 async function run() {
-  const feedUrl = process.env.FEED_URL;
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-  const templateFile = path.resolve(__dirname, "../src/template.md");
-  const outputDir = path.resolve(__dirname, "../_output");
-  fs.mkdirSync(outputDir, { recursive: true });
-
   try {
+    const feedUrl = core.getInput("FEED_URL");
+    const templateFile = core.getInput("TEMPLATE_FILE");
+    const outputDir = core.getInput("OUTPUT_DIR");
+    fs.mkdirSync(outputDir, { recursive: true });
+
     if (!feedUrl) {
       throw new Error("Missing input FEED_URL");
     }

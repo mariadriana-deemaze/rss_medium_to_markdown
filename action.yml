@@ -1,0 +1,21 @@
+name: "RSS Medium feed to Markdown"
+description: "Convert an RSS feed into markdown files using a template"
+author: "mariadriana-deemaze"
+branding:
+  icon: "rss"
+  color: "orange"
+
+inputs:
+  FEED_URL:
+    description: "The RSS feed URL to fetch posts from"
+    required: true
+  TEMPLATE_FILE:
+    description: "Path to the markdown template file"
+    required: true
+  OUTPUT_DIR:
+    description: "Directory where markdown files will be saved"
+    required: true
+
+runs:
+  using: "node21"
+  main: "dist/index.js"

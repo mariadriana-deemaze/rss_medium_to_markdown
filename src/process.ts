@@ -28,11 +28,11 @@ export async function processFeed(
         const filePath = saveMarkdown(outputDir, title, output, date);
         core.info(`Markdown file '${filePath}' created.`);
       } catch (error) {
-        core.error(`Error processing feed entry for ${url}`);
+        core.error(`Error processing feed entry for ${url}: ${error}`);
       }
     });
   } catch (error) {
-    core.error(`Error processing feed at ${url}`);
+    core.error(`Error processing feed at ${url}: ${error}`);
   }
 }
 
@@ -43,7 +43,13 @@ export async function processFeed(
  * @returns
  */
 async function fetchAndParseFeed(url: string): Promise<ParsedFeed> {
-  const response = await axios.get(url);
+  const response = await axios.get(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Node.js)',
+      'Accept': 'application/rss+xml, application/xml, text/xml'
+    },
+    responseType: 'text'
+  });
   const feedData = response.data;
   const parsed: ParsedFeed = await parseStringPromise(feedData);
   return parsed;
